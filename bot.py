@@ -10,7 +10,9 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 # ============================
 # 8877598793:AAFU8vYAftBUluzX6hskL2xcxDcdcVn2QJM
 # ============================
-BOT_TOKEN = "8877598793:AAFU8vYAftBUluzX6hskL2xcxDcdcVn2QJM"
+import os
+
+BOT_TOKEN = os.getenv("8877598793:AAFU8vYAftBUluzX6hskL2xcxDcdcVn2QJM", "").strip()
 
 # Релиз: 27 ноября 2026, 17:55:55 по Молдове (UTC+2)
 RELEASE_AT = datetime.fromisoformat("2026-11-27T17:55:55+02:00")
