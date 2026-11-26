@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07110e">
+  <title>RedMira — Countdown</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root { color-scheme: dark; --green:#19d69a; --muted:#8da49a; }
+    * { box-sizing:border-box }
+    body {
+      margin:0; min-height:100vh; display:grid; place-items:center;
+      padding:22px; color:#f4fff9; font-family:Arial,sans-serif;
+      background:radial-gradient(ellipse at 50% 0%,#123c2e 0%,#07110e 52%,#030706 100%);
+    }
+    .panel {
+      width:min(560px,100%); padding:30px 22px; text-align:center;
+      border:1px solid #1b5944; border-radius:28px;
+      background:linear-gradient(160deg,rgba(15,39,30,.96),rgba(5,13,10,.98));
+      box-shadow:0 20px 80px #0009, inset 0 1px #ffffff0c;
+    }
+    .mark { color:var(--green); font-size:12px; letter-spacing:5px; font-weight:700 }
+    h1 { margin:12px 0 5px; font-size:clamp(34px,9vw,54px); letter-spacing:3px }
+    .sub { color:var(--muted); font-size:13px; letter-spacing:2px; margin-bottom:30px }
+    .timer { display:grid; grid-template-columns:repeat(4,1fr); gap:9px }
+    .unit { padding:16px 4px; border:1px solid #1c4838; border-radius:16px; background:#0b1b14 }
+    .number { display:block; color:var(--green); font-size:clamp(25px,7vw,38px); font-weight:800; font-variant-numeric:tabular-nums }
+    .label { display:block; color:var(--muted); font-size:9px; letter-spacing:1px; margin-top:7px }
+    .note { margin:24px 0 0; color:#b7c9c0; font-size:14px; line-height:1.6 }
+    .buttons { display:grid; gap:12px; margin-top:24px }
+    .button {
+      display:block; padding:16px 14px; border-radius:14px; text-decoration:none;
+      font-weight:700; color:#04110b; background:var(--green)
+    }
+    .button.secondary { color:#eafff5; background:#142a20; border:1px solid #2c654e }
+    .hidden { display:none }
+    @media(max-width:360px) { .timer{gap:5px}.unit{padding:13px 2px}.label{font-size:8px} }
+  </style>
+</head>
+<body>
+  <main class="panel">
+    <div class="mark">OFFICIAL LAUNCH</div>
+    <h1>REDMIRA</h1>
+    <div class="sub" id="subtitle">ОБРАТНЫЙ ОТСЧЁТ ДО ЗАПУСКА</div>
+
+    <section id="countdown" class="timer" aria-live="polite">
+      <div class="unit"><span class="number" id="days">000</span><span class="label">ДНЕЙ</span></div>
+      <div class="unit"><span class="number" id="hours">00</span><span class="label">ЧАСОВ</span></div>
+      <div class="unit"><span class="number" id="minutes">00</span><span class="label">МИНУТ</span></div>
+      <div class="unit"><span class="number" id="seconds">00</span><span class="label">СЕКУНД</span></div>
+    </section>
+
+    <p class="note" id="note">Большой запуск уже близко. Возвращайся сюда, чтобы следить за временем.</p>
+
+    <section id="released" class="hidden">
+      <h2 style="color:var(--green);font-size:26px">REDMIRA УЖЕ ВЫШЛА!</h2>
+      <p class="note">Выбирай свою платформу:</p>
+      <div class="buttons">
+        <a class="button" id="ios" href="https://example.com" target="_blank" rel="noopener">🍎 iPhone — открыть сайт</a>
+        <a class="button secondary" id="android" href="https://example.com/redmira.apk">🤖 Android — скачать приложение</a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ВАЖНО: замени эти две ссылки на реальные перед публикацией.
+    const IOS_URL = "https://example.com";
+    const ANDROID_APK_URL = "https://example.com/redmira.apk";
+
+    // 17:55:55 по времени Кишинёва (UTC+02:00).
+    const RELEASE_AT = new Date("2026-11-27T17:55:55+02:00").getTime();
+    const $ = id => document.getElementById(id);
+    $("ios").href = IOS_URL;
+    $("android").href = ANDROID_APK_URL;
+
+    function showRelease() {
+      $("countdown").classList.add("hidden");
+      $("note").classList.add("hidden");
+      $("subtitle").textContent = "ОФИЦИАЛЬНЫЙ РЕЛИЗ";
+      $("released").classList.remove("hidden");
+    }
+
+    function tick() {
+      const remaining = RELEASE_AT - Date.now();
+      if (remaining <= 0) { showRelease(); return; }
+      const total = Math.floor(remaining / 1000);
+      const days = Math.floor(total / 86400);
+      const hours = Math.floor((total % 86400) / 3600);
+      const minutes = Math.floor((total % 3600) / 60);
+      const seconds = total % 60;
+      $("days").textContent = String(days).padStart(3, "0");
+      $("hours").textContent = String(hours).padStart(2, "0");
+      $("minutes").textContent = String(minutes).padStart(2, "0");
+      $("seconds").textContent = String(seconds).padStart(2, "0");
+    }
+    if (window.Telegram?.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+    tick();
+    setInterval(tick, 250);
+  </script>
+</body>
+</html>
